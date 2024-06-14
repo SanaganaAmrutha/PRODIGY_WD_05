@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Weather App</h1>
+    <input type="text" id="location" placeholder="Enter location">
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="info"></div>
+</div>
+
+<script>
+    const apiKey = 'e0a1f8875ad491dab0a217e1686e4092';
+
+    function getWeather() {
+        const location = document.getElementById('location').value;
+        if (location) {
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`)
+                .then(response => response.json())
+                .then(data => showWeather(data))
+                .catch(() => {
+                    document.getElementById('info').innerHTML = `<p>Error getting weather data.</p>`;
+                });
+        }
+    }
+
+    function showWeather(data) {
+        const info = document.getElementById('info');
+        if (data.cod === 200) {
+            info.innerHTML = `
+                <h2>${data.name}, ${data.sys.country}</h2>
+                <p>${data.weather[0].description}</p>
+                <p>Temperature: ${data.main.temp}°C</p>
+                <p>Humidity: ${data.main.humidity}%</p>
+                <p>Wind Speed: ${data.wind.speed} m/s</p>
+            `;
+        } else {
+            info.innerHTML = `<p>${data.message}</p>`;
+        }
+    }
+</script>
+
+</body>
+</html>
+
